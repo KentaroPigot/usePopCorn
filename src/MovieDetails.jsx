@@ -8,7 +8,6 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onAddWatched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
-  // const [isWatched, setIsWatched] = useState(false);
 
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
 
@@ -56,6 +55,28 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onAddWatched }) {
     }
     getMovieDetails();
   }, [selectedId]);
+
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+
+    return () => {
+      document.title = "usePopcorn";
+    };
+  }, [title]);
+
+  useEffect(() => {
+    function callBack(e) {
+      if (e.code === "Escape") {
+        onCloseMovie();
+        console.log("RUNNING");
+      }
+    }
+
+    document.addEventListener("keydown", callBack);
+
+    return () => document.removeEventListener("keydown", callBack);
+  }, [onCloseMovie]);
 
   return (
     <div className="details">
