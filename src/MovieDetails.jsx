@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
+import useKey from "./hooks/useKey";
 
 const KEY = "f8cd8d49";
 
@@ -8,6 +9,14 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onAddWatched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
+
+  const countRef = useRef(0);
+
+  useEffect(() => {
+    if (userRating) {
+      countRef.current = countRef.current + 1;
+    }
+  }, [userRating]);
 
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
 
@@ -65,18 +74,20 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onAddWatched }) {
     };
   }, [title]);
 
-  useEffect(() => {
-    function callBack(e) {
-      if (e.code === "Escape") {
-        onCloseMovie();
-        console.log("RUNNING");
-      }
-    }
+  useKey("Escape", onCloseMovie);
 
-    document.addEventListener("keydown", callBack);
+  // useEffect(() => {
+  //   function callBack(e) {
+  //     if (e.code === "Escape") {
+  //       onCloseMovie();
+  //       console.log("RUNNING");
+  //     }
+  //   }
 
-    return () => document.removeEventListener("keydown", callBack);
-  }, [onCloseMovie]);
+  //   document.addEventListener("keydown", callBack);
+
+  //   return () => document.removeEventListener("keydown", callBack);
+  // }, [onCloseMovie]);
 
   return (
     <div className="details">
